@@ -2,11 +2,12 @@ import axios from 'axios'
 
 export function request(config) {
   const instance = axios.create({
-    baseURL: 'http://xxxxxxx.com',
+    baseURL: '/api',
     timeout:5000
   })
 
   instance.interceptors.request.use(config => {   
+    config.headers['Content-Type'] = 'application/json'
     return config;         
   },err => {
     console.log(err);

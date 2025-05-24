@@ -9,7 +9,7 @@ Vue.use(ElementUI);
 
 Vue.config.productionTip = false
 
-import './assets/css/normalize.css'
+import './assets/css/reset.css'
 
 
 new Vue({
