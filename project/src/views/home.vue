@@ -3,8 +3,8 @@
     <!-- 标题区域 -->
     <div class="title-group">
       <h2 class="title">物料关联管理</h2>
-      <el-button type="primary" class="add" size="small" @click="open = true">
-        <i class="el-icon-plus"></i>单个添加</el-button>
+      <el-button type="primary" class="addform" size="small" @click="handleAdd">
+        <i class="el-icon-plus" style="margin-right:5px;"></i>单个添加</el-button>
     </div>
     <!-- 上传区域 -->
     <el-upload class="upload-box" drag multiple action="http://localhost:3000/upload" :on-success="handleUploadSuccess" :before-upload="beforeUpload">
@@ -24,32 +24,32 @@
       <div class="table-header">
         <h2 class="sub-title">关联关系列表</h2>
         <div class="search-group">
-          <el-input placeholder="震坤行SKU编码、T+存货编码" v-model="keyword" class="search-input" size="small" suffix-icon="el-icon-search">
-            <el-select slot="prepend" placeholder="请选择" style="width: 100px" v-model="searchType">
-              <el-option label="全部" value="1"></el-option>
-              <el-option label="震坤行SKU编码" value="2"></el-option>
-              <el-option label="T+存货编码" value="3"></el-option>
-            </el-select>
-          </el-input>
+        <el-input v-model="keyword" placeholder="请输入震坤行SKU编码、T+存货编码" class="search-input" size="small" clearable filterable>
+        <el-select slot="prepend" placeholder="请选择" style="width: 120px" v-model="searchType">
+           <el-option label="全部" value="1"></el-option>
+           <el-option label="SKU编码" value="2"></el-option>
+           <el-option label="T+存货编码" value="3"></el-option>
+        </el-select>
+        </el-input>
           <div class="action-btns">
-            <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
-            <el-button size="small" @click="exportAll">导出</el-button>
+            <el-button type="primary" size="small" @click="handleSearch"><i class="el-icon-search" style="margin-right:5px;"></i>查询</el-button>
+            <el-button size="small" @click="exportAll"><i class="el-icon-upload2" style="margin-right:5px;"></i>导出</el-button>
           </div>
         </div>
       </div>
     </div>
     
     <el-table :data="tableData" style="width: 100%" border fit v-loading="loading" :header-cell-style="{'background-color':'#f5f7fa'}">
-      <el-table-column prop="sku_code" label="震坤行SKU编码" align="center"></el-table-column>
-      <el-table-column prop="inventory_code" label="T+存货编码" align="center"></el-table-column>
-      <el-table-column prop="sku_name" label="震坤行SKU名称" align="center"></el-table-column>
-      <el-table-column prop="inventory_name" label="T+存货名称" align="center"></el-table-column>
-      <el-table-column prop="createTime" label="创建时间" align="center"></el-table-column>
+      <el-table-column prop="skuCode" label="震坤行SKU编码" align="center"></el-table-column>
+      <el-table-column prop="inventoryCode" label="T+存货编码" align="center"></el-table-column>
+      <el-table-column prop="skuName" label="震坤行SKU名称" align="center"></el-table-column>
+      <el-table-column prop="inventoryName" label="T+存货名称" align="center"></el-table-column>
+      <el-table-column prop="modifyDate" label="操作时间" align="center"></el-table-column>
       <el-table-column label="操作" align="center" fixed="right">
         <template slot-scope="scope">
-          <el-tooltip content="删除" placement="top">
-            <i class="el-icon-delete danger-icon" @click="handleDelete(scope.row)"></i>
-          </el-tooltip>
+          <el-button type="text" size="small" @click="handleDelete(scope.row)">
+          <i class="el-icon-delete danger-icon"></i>
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -57,20 +57,20 @@
     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="this.queryParams.pageNum" background :page-size="this.queryParams.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total" style="margin-top: 20px" :pager-count="computedPagerCount">
     </el-pagination>
     <!-- 抽屉表单 -->
-    <el-drawer title="单个添加" :visible.sync="open" :size="drawerSize" :direction="drawerDirection" :before-close="handleClose">
+    <el-drawer title="单个添加" :visible.sync="open" :size="drawerSize" :direction="drawerDirection">
       <div class="drawer-content">
-        <el-form ref="form" label-width="120px" :model="formData" label-position="top" style="padding: 20px" :rules="rules">
-          <el-form-item label="震坤行SKU编码" prop="sku_code" class="drawer-item">
-            <el-input v-model=" formData.sku_code" placeholder="请输入震坤行SKU编码" />
+        <el-form ref="form" label-width="120px" :model="form" label-position="top" style="padding: 20px" :rules="rules">
+          <el-form-item label="震坤行SKU编码" prop="skuCode" class="drawer-item">
+            <el-input v-model="form.skuCode" placeholder="请输入震坤行SKU编码" />
           </el-form-item>
-          <el-form-item label="T+存货编码" prop="inventory_code" class="drawer-item">
-            <el-input v-model="formData.inventory_code" placeholder="请输入T+存货编码" />
+          <el-form-item label="T+存货编码" prop="inventoryCode" class="drawer-item">
+            <el-input v-model="form.inventoryCode" placeholder="请输入T+存货编码" />
           </el-form-item>
-          <el-form-item label="震坤行SKU名称" prop="sku_name" class="drawer-item">
-            <el-input v-model=" formData.sku_name" placeholder="请输入震坤行SKU名称" />
+          <el-form-item label="震坤行SKU名称" prop="skuName" class="drawer-item">
+            <el-input v-model="form.skuName" placeholder="请输入震坤行SKU名称" />
           </el-form-item>
-          <el-form-item label="T+存货名称" prop="inventory_name" class="drawer-item">
-            <el-input v-model="formData.inventory_name" placeholder="请输入存货名称" />
+          <el-form-item label="T+存货名称" prop="inventoryName" class="drawer-item">
+            <el-input v-model="form.inventoryName" placeholder="请输入存货名称" />
           </el-form-item>
         </el-form>
         <div class="drawer__footer">
@@ -90,32 +90,33 @@ export default {
     return {
       tableData: [],
       queryParams:{
-     
+        inventoryCode:"",
+        skuCode:"",
         pageNum:1,
         pageSize:10
       },
       total: 0,
       open: false,
       keyword: "",
-      searchType: "",
-      formData: {
-        sku_code: "",
-        sku_name: "",
-        inventory_code: "",
-        inventory_name: "",
+      searchType: "1",
+      form: {
+        skuCode: "",
+        skuName: "",
+        inventoryCode: "",
+        inventoryName: "",
       },
       loading: false,
       screenWidth: document.documentElement.clientWidth,
 
       rules: {
-        sku_code: [
+        skuCode: [
           {
             required: true,
             message: "震坤行SKU编码不能为空",
             trigger: "blur",
           },
         ],
-        inventory_code: [
+        inventoryCode: [
           { required: true, message: "T+存货编码不能为空", trigger: "blur" },
         ],
       },
@@ -144,9 +145,33 @@ export default {
     window.removeEventListener("resize", this.handleResize);
   },
   methods: {
-    handleDelete(row) {
-      console.log(row);
-    },
+  handleDelete(row) {
+    this.$confirm("确定删除该条数据?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    })
+      .then(() => {
+        del(row.id).then((res) => {
+          this.$message({
+            type: "success",
+            message: "删除成功",
+          });
+          this.getQueryList();
+        }).catch((err) => {
+          this.$message({
+            type: "error",
+            message: "删除失败",
+          });
+        });
+      }).catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消删除",
+        });
+      });
+  },
+
     handleUploadSuccess(res, file) {
       console.log(res, file);
     },
@@ -161,8 +186,21 @@ export default {
     },
 
     handleSearch() {
+    this.queryParams.skuCode = "";
+    this.queryParams.inventoryCode = "";
+
+    if(this.searchType === "1"){
+      this.queryParams.skuCode = this.keyword;
+      this.queryParams.inventoryCode = this.keyword;
+    }else if (this.searchType === "2") {
+      // 震坤行SKU编码查询
+      this.queryParams.skuCode = this.keyword;
+    } else if (this.searchType === "3") {
+      // T+存货编码查询
+      this.queryParams.inventoryCode = this.keyword;
+    }
     this.queryParams.pageNum = 1;
-      this.getQueryList();
+    this.getQueryList();
 
     },
     handleResize() {
@@ -171,55 +209,53 @@ export default {
 
     //表格数据
     getQueryList() {
+      this.loading = true;
       queryList(this.queryParams).then((res) => {
-      console.log(res);
-        //this.tableData = res.data.list;
-       // this.total = res.data.total;
+      this.tableData = res.rows.filter(item => item.isDelete === 0);
+      this.total=parseInt(res.total);
+      this.loading = false;
+      }).catch((err) => {
+        console.log(err);
+        this.loading = false;
       });
     },
 
-    handleClose(done) {
-      if (this.loading) {
-        return;
-      }
-      this.$confirm("确定要提交表单吗？")
-        .then((_) => {
-          this.loading = true;
-          this.timer = setTimeout(() => {
-            done();
-            // 动画关闭需要一定的时间
-            setTimeout(() => {
-              this.loading = false;
-            }, 400);
-          }, 2000);
-        })
-        .catch((_) => {});
-    },
     cancelForm() {
       this.loading = false;
       this.open = false;
-      this.resetForm();
-      clearTimeout(this.timer);
+      this.reset()
     },
-    resetForm() {
-      this.$refs.form.resetFields();
+    handleAdd(){
+      this.open=true;
+      this.reset()
+    },
+    reset(){
+      this.form={
+        skuCode: "",
+        skuName: "",
+        inventoryCode: "",
+        inventoryName: "",
+      }
     },
     submitForm(form) {
       this.$refs[form].validate((valid) => {
-        if (valid) {
-          console.log(this.formData);
-          add(this.formData).then((res) => { 
+        if(valid) {
+          add(this.form).then((res) => {
           console.log(res)
-          if (res.code === 200) {
-            this.$message.success("添加成功");
-            this.open = false;
-          }else{
-            this.$message.error("添加失败");}
-          });
-          this.resetForm();
-        } else {
-          console.log("error submit!!");
-          return false;
+            this.open=false;
+            this.$message({
+              type: "success",
+              message: res,
+            });
+            this.getQueryList();
+          }).catch((err) => {
+            console.log(err);
+            this.$message({
+              type: "error",
+              message: res,
+            });
+          })
+          
         }
       });
     },
@@ -231,11 +267,35 @@ export default {
       })
         .then(() => {
           // 导出逻辑
-          console.log("导出全部数据");
+          this.exportToCSV()
         })
         .catch(() => {
           this.$message.info("已取消");
         });
+    },
+    exportToCSV(){
+      const data=this.tableData;
+      const headers = ["震坤行SKU编码", "T+存货编码", "震坤行SKU名称", "T+存货名称", "操作时间"];
+      const csvContent = [
+      headers.join(","), // 表头
+      ...data.map(item => [
+        item.skuCode,
+        item.inventoryCode,
+        item.skuName,
+        item.inventoryName,
+        item.modifyDate,
+        ].join(","))
+      ].join("\n");
+
+      // 创建下载链接
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "物料关联管理.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
     beforeUpload(file) {
       const isExcel = ["xls", "xlsx", "csv"].includes(

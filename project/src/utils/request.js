@@ -2,12 +2,11 @@ import axios from 'axios'
 
 export function request(config) {
   const instance = axios.create({
-    baseURL: 'http://117.72.35.156:13333',
+    baseURL: '/api',
     timeout:5000
   })
 
   instance.interceptors.request.use(config => {   
-    // config.headers['Content-Type'] = 'application/json'
     return config;         
   },err => {
     console.log(err);
@@ -16,7 +15,12 @@ export function request(config) {
   instance.interceptors.response.use(res => {   
     return res.data         
   },err => {
-    console.log(err);
+    if(err.response){
+      const status = err.response.status;
+      if(status === 409){
+        return Promise.reject(err.response.data)
+      }
+    }
   })
  
   return instance(config)  

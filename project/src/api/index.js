@@ -10,29 +10,24 @@ export function queryList(query) {
 }
 
 //新增
-export function add() {
+export function add(data) {
   return request({
     url: "/api/sku-inventory/add",
     method: "post",
     data: data,
-  });
-}
-//修改
-export function edit(data,id) {
-  return request({
-    url: "/api/sku-inventory/update"+id,
-    method: "put",
-    data:data
+    headers: {
+      "Content-Type": "application/json"
+    }
   });
 }
 
 
 //删除
-export function del(data) {
+export function del(id) {
   return request({
     url: "/api/sku-inventory/delete",
     method: "delete",
-    data:data
+    params:{id}
   });
 }
 
