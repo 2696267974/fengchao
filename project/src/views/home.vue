@@ -83,15 +83,14 @@
 </template>
 
 <script>
-import { queryList } from "@/api/index.js";
+import { queryList,add,del,edit } from "@/api/index.js";
 export default {
   name: "home",
   data() {
     return {
       tableData: [],
       queryParams:{
-        skuCode:"",
-        inventoryCode:"",
+     
         pageNum:1,
         pageSize:10
       },
@@ -208,7 +207,15 @@ export default {
     submitForm(form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          console.log(this.form);
+          console.log(this.formData);
+          add(this.formData).then((res) => { 
+          console.log(res)
+          if (res.code === 200) {
+            this.$message.success("添加成功");
+            this.open = false;
+          }else{
+            this.$message.error("添加失败");}
+          });
           this.resetForm();
         } else {
           console.log("error submit!!");
